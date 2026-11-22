@@ -1,0 +1,5 @@
+Time resolution is 1 ps
+Sample 0 : Input = -3334, Desired = 0, Output = 0
+Sample 1 : Input = 9242, Desired = 3175, Output = 0
+Sample 2 : Input = 2143, Desired = 6038, Output = -2
+Sample 3 : Input = 2612, Desired = 8311, Output = 0
