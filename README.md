@@ -4,7 +4,7 @@ Design and simulation of a Least Mean Squares (LMS) adaptive filter using Verilo
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 - [Project Overview](#project-overview)
 - [Objectives](#objectives)
 - [Design Approach](#design-approach)
@@ -20,7 +20,7 @@ Design and simulation of a Least Mean Squares (LMS) adaptive filter using Verilo
 
 ---
 
-## 🔍 Project Overview
+##  Project Overview
 
 This repository presents the **RTL-to-GDSII implementation and datapath optimization** of an LMS adaptive filter developed as part of **Minor Project 2**. The primary goal is to investigate the hardware impact of reducing datapath bit-width while maintaining equivalent functional and convergence behavior.
 
@@ -32,7 +32,7 @@ Prior to physical design, the filter was iteratively evaluated across **35-bit, 
 
 ---
 
-## 🎯 Objectives
+##  Objectives
 
 * Implement a parameterizable LMS adaptive filter at the Register Transfer Level (RTL) using **Verilog HDL**.
 * Establish a baseline reference architecture using a **35-bit datapath**.
@@ -43,7 +43,7 @@ Prior to physical design, the filter was iteratively evaluated across **35-bit, 
 
 ---
 
-## 🛠️ Design Approach
+##  Design Approach
 
 The project follows a structured top-down VLSI design and verification methodology:
 
@@ -89,7 +89,7 @@ Conventional        Optimized
 
 ---
 
-## 📐 Mathematical Formulation
+##  Mathematical Formulation
 
 The Least Mean Squares (LMS) algorithm iteratively updates filter tap weights to minimize the mean square error between a desired reference signal and the actual filter output.
 
@@ -116,7 +116,7 @@ The Least Mean Squares (LMS) algorithm iteratively updates filter tap weights to
 
 ---
 
-## ⚙️ Datapath Optimization
+##  Datapath Optimization
 
 To minimize hardware overhead without degrading signal integrity or convergence stability, the internal fixed-point datapath was systematically scaled down:
 
@@ -131,7 +131,7 @@ To minimize hardware overhead without degrading signal integrity or convergence 
 
 ---
 
-## ✅ Verification Methodology
+##  Verification Methodology
 
 ### 1. MATLAB (Golden Reference Model)
 * Models the fixed-point LMS algorithm behavior.
@@ -146,7 +146,7 @@ To minimize hardware overhead without degrading signal integrity or convergence 
 
 ---
 
-## 🏭 Synopsys RTL-to-GDSII Flow
+##  Synopsys RTL-to-GDSII Flow
 
 Both the 35-bit and 32-bit architectures are processed through a complete ASIC backend flow using Synopsys EDA tools:
 
@@ -195,7 +195,7 @@ Post-layout comparisons between the 35-bit and 32-bit designs evaluate:
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
 
 ```text
 lms-adaptive-filter-rtl-to-gdsii/
@@ -221,21 +221,21 @@ lms-adaptive-filter-rtl-to-gdsii/
 
 ---
 
-## 📊 Project Status
+##  Project Status
 
 | Stage | Task | Status |
 | :--- | :--- | :--- |
-| **Algorithm** | LMS algorithm development & MATLAB verification | ✅ Completed |
-| **Test Vectors** | Memory initialization file generation | ✅ Completed |
-| **RTL Design** | 35-bit, 34-bit, 33-bit & 32-bit RTL modeling | ✅ Completed |
-| **Verification** | Xilinx Vivado functional verification | ✅ Completed |
-| **Synthesis & P&R** | 35-bit Synopsys RTL-to-GDSII implementation | 🔄 In Progress |
-| **Synthesis & P&R** | 32-bit Synopsys RTL-to-GDSII implementation | 🔄 In Progress |
-| **Sign-Off** | PPA comparison & final GDSII generation | ⏳ Pending |
+| **Algorithm** | LMS algorithm development & MATLAB verification |  Completed |
+| **Test Vectors** | Memory initialization file generation |  Completed |
+| **RTL Design** | 35-bit, 34-bit, 33-bit & 32-bit RTL modeling |  Completed |
+| **Verification** | Xilinx Vivado functional verification |  Completed |
+| **Synthesis & P&R** | 35-bit Synopsys RTL-to-GDSII implementation |   Completed |
+| **Synthesis & P&R** | 32-bit Synopsys RTL-to-GDSII implementation |  Completed |
+| **Sign-Off** | PPA comparison & final GDSII generation |   Completed |
 
 ---
 
-## 💻 Tools & Technologies
+##  Tools & Technologies
 
 * **HDL & Modeling:** Verilog HDL, MATLAB
 * **Simulation & Verification:** Xilinx Vivado
@@ -244,7 +244,7 @@ lms-adaptive-filter-rtl-to-gdsii/
 
 ---
 
-## 📌 Expected Outcome & Scope
+##  Expected Outcome & Scope
 
 ### Expected Outcome
 This project aims to demonstrate that reducing the LMS datapath from 35 bits to 32 bits preserves algorithmic convergence while yielding measurable hardware efficiency gains. All architectural conclusions will be grounded in post-layout physical implementation data rather than behavioral simulation alone.
@@ -257,7 +257,7 @@ This project aims to demonstrate that reducing the LMS datapath from 35 bits to 
 
 ---
 
-## 👤 Author
+##   Author
 
 **Penubothu Vishnusai**  
 *B.Tech — Electronics and Communication Engineering (VLSI Design)*  
