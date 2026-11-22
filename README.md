@@ -1,278 +1,267 @@
-lms-adaptive-filter
-Design and simulation of an LMS adaptive filter using Verilog, with RTL implementation and Synopsys based verification.
-LMS Adaptive Filter — RTL to GDSII
-Project Overview
-This project presents the RTL-to-GDSII implementation and datapath optimization of an LMS (Least Mean Squares) adaptive filter as part of Minor Project 2.
-The primary objective is to investigate the effect of datapath width optimization on the implementation of an LMS adaptive filter while maintaining equivalent functional behavior.
-Two datapath configurations are considered:
-35-bit datapath — Conventional implementation
-32-bit datapath — Optimized implementation
-The functionality of the designs has been verified prior to physical implementation using MATLAB and Xilinx Vivado. The designs were evaluated iteratively across 35-bit, 34-bit, 33-bit, and 32-bit datapaths, and the observed functional behavior was found to be similar. The next stage of the project is to establish the implementation-level advantages of the optimized 32-bit architecture through the Synopsys RTL-to-GDSII flow.
+# LMS Adaptive Filter — RTL-to-GDSII Implementation & Datapath Optimization
+
+Design and simulation of a Least Mean Squares (LMS) adaptive filter using Verilog HDL, featuring datapath-width optimization (35-bit to 32-bit), cross-platform functional verification (MATLAB & Xilinx Vivado), and full RTL-to-GDSII physical implementation using Synopsys EDA tools.
+
 ---
-Objectives
-The major objectives of this project are:
-To implement an LMS adaptive filter at the RTL level using Verilog HDL.
-To establish a conventional implementation using a 35-bit datapath.
-To investigate datapath-width reduction through iterative evaluation of 35-bit, 34-bit, 33-bit, and 32-bit configurations.
-To verify the functional behavior of the different datapath configurations using MATLAB and Xilinx Vivado.
-To identify a reduced-width datapath that maintains comparable functional behavior.
-To implement the optimized 32-bit datapath for further VLSI implementation.
-To perform synthesis and subsequent physical design using Synopsys EDA tools.
-To compare the conventional and optimized implementations in terms of relevant PPA (Power, Performance, and Area) metrics.
-To complete the RTL-to-GDSII flow and evaluate the physical implementation results.
+
+## 📋 Table of Contents
+- [Project Overview](#project-overview)
+- [Objectives](#objectives)
+- [Design Approach](#design-approach)
+- [Mathematical Formulation](#mathematical-formulation)
+- [Datapath Optimization](#datapath-optimization)
+- [Verification Methodology](#verification-methodology)
+- [Synopsys RTL-to-GDSII Flow](#synopsys-rtl-to-gdsii-flow)
+- [Repository Structure](#repository-structure)
+- [Project Status](#project-status)
+- [Tools & Technologies](#tools--technologies)
+- [Expected Outcome & Scope](#expected-outcome--scope)
+- [Author](#author)
+
 ---
-Design Approach
-The project follows a systematic design and optimization methodology.
+
+## 🔍 Project Overview
+
+This repository presents the **RTL-to-GDSII implementation and datapath optimization** of an LMS adaptive filter developed as part of **Minor Project 2**. The primary goal is to investigate the hardware impact of reducing datapath bit-width while maintaining equivalent functional and convergence behavior.
+
+Two primary hardware architectures are evaluated:
+* **35-bit Datapath:** Conventional reference implementation.
+* **32-bit Datapath:** Optimized implementation candidate.
+
+Prior to physical design, the filter was iteratively evaluated across **35-bit, 34-bit, 33-bit, and 32-bit** configurations using **MATLAB** and **Xilinx Vivado**. Because the 32-bit architecture demonstrated equivalent functional behavior to the 35-bit baseline, it was selected for full ASIC synthesis, Place & Route (P&R), and PPA (Power, Performance, and Area) comparison via the **Synopsys RTL-to-GDSII flow**.
+
+---
+
+## 🎯 Objectives
+
+* Implement a parameterizable LMS adaptive filter at the Register Transfer Level (RTL) using **Verilog HDL**.
+* Establish a baseline reference architecture using a **35-bit datapath**.
+* Iteratively evaluate datapath-width reduction across **35-bit, 34-bit, 33-bit, and 32-bit** configurations.
+* Verify functional equivalence between high-level algorithmic models (MATLAB) and cycle-accurate RTL simulations (Xilinx Vivado).
+* Synthesize and physically implement both the conventional (35-bit) and optimized (32-bit) designs using **Synopsys EDA tools**.
+* Quantitatively compare both architectures across **Power, Performance, and Area (PPA)** metrics post-layout.
+
+---
+
+## 🛠️ Design Approach
+
+The project follows a structured top-down VLSI design and verification methodology:
+
 ```text
-        LMS Algorithm
+       LMS Algorithm
              │
              ▼
-      MATLAB Reference
+     MATLAB Reference
              │
              ▼
      Datapath Analysis
+      ┌──────┼──────┐
+      ▼      ▼      ▼
+   35-bit 34-bit 33-bit
+      │
+      ▼
+   32-bit (Selected)
+      │
+      ▼
+  Functional Verification
+    (MATLAB + Vivado)
+      │
+      ▼
+    RTL Implementation
+    ┌────────┴────────┐
+    ▼                 ▼
+35-bit              32-bit
+Conventional        Optimized
+    │                 │
+    └────────┬────────┘
+             ▼
+       Synopsys Flow
              │
-     ┌───────┼────────┐
-     ▼       ▼        ▼
-    35-bit  34-bit   33-bit
-                       │
-                       ▼
-                     32-bit
-                       │
-                       ▼
-              Functional Verification
-                 MATLAB + Vivado
-                       │
-                       ▼
-              RTL Implementation
-                       │
-              ┌────────┴────────┐
-              ▼                 ▼
-        35-bit Conventional   32-bit Optimized
-              │                 │
-              └────────┬────────┘
-                       ▼
-                Synopsys Flow
-                       │
-                       ▼
-              Synthesis / P&R
-                       │
-                       ▼
-                    GDSII
-                       │
-                       ▼
-                 PPA Comparison
+             ▼
+      Synthesis / P&R
+             │
+             ▼
+           GDSII
+             │
+             ▼
+      PPA Comparison
 ```
+
 ---
-LMS Adaptive Filter
-The Least Mean Squares (LMS) algorithm is an adaptive filtering algorithm that iteratively updates filter coefficients to minimize the error between the desired signal and the filter output.
-The filter output is represented as:
-$$
-y(n) = \sum_{i=0}^{N-1} w_i(n)x(n-i)
-$$
-The error signal is:
-$$
-e(n) = d(n) - y(n)
-$$
-The filter coefficients are updated according to:
-$$
-w_i(n+1) = w_i(n) + \mu e(n)x(n-i)
-$$
-where:
-(x(n)) — Input signal
-(d(n)) — Desired signal
-(y(n)) — Filter output
-(e(n)) — Error signal
-(w_i(n)) — Filter coefficient
-(\mu) — Step-size parameter
-(N) — Filter length
+
+## 📐 Mathematical Formulation
+
+The Least Mean Squares (LMS) algorithm iteratively updates filter tap weights to minimize the mean square error between a desired reference signal and the actual filter output.
+
+1. **Filter Output:**
+   $$y(n) = \sum_{i=0}^{N-1} w_i(n)x(n-i)$$
+
+2. **Error Estimation:**
+   $$e(n) = d(n) - y(n)$$
+
+3. **Coefficient (Weight) Update:**
+   $$w_i(n+1) = w_i(n) + \mu e(n)x(n-i)$$
+
+### Parameter Definitions
+
+| Symbol | Description |
+| :--- | :--- |
+| $x(n)$ | Input signal sample at time $n$ |
+| $d(n)$ | Desired reference signal |
+| $y(n)$ | Computed filter output |
+| $e(n)$ | Estimation error signal |
+| $w_i(n)$ | $i^{\text{th}}$ filter tap coefficient |
+| $\mu$ | Step-size (learning rate) parameter |
+| $N$ | Filter order / tap length |
+
 ---
-Datapath Optimization
-A key focus of this project is the investigation of datapath-width reduction.
-The initial implementation uses a 35-bit datapath as the conventional reference architecture. To investigate the possibility of reducing hardware complexity, the datapath width was evaluated iteratively:
-Datapath	Purpose
-35-bit	Conventional reference
-34-bit	Intermediate evaluation
-33-bit	Intermediate evaluation
-32-bit	Optimized candidate
-The different configurations were evaluated for functional behavior using MATLAB and Vivado.
-The preliminary verification indicated that the 32-bit configuration exhibits behavior comparable to the 35-bit reference for the tested input data and operating conditions.
-The 32-bit design is therefore selected as the optimized candidate for subsequent Synopsys-based implementation and comparison.
-> **Note:** Final claims regarding area, timing, power, and physical implementation benefits will be made only after completing the Synopsys RTL-to-GDSII flow.
+
+## ⚙️ Datapath Optimization
+
+To minimize hardware overhead without degrading signal integrity or convergence stability, the internal fixed-point datapath was systematically scaled down:
+
+| Datapath Width | Architectural Role | Functional Observation |
+| :--- | :--- | :--- |
+| **35-bit** | Conventional Reference | Baseline precision and convergence |
+| **34-bit** | Intermediate Evaluation | Negligible deviation from baseline |
+| **33-bit** | Intermediate Evaluation | Negligible deviation from baseline |
+| **32-bit** | **Optimized Candidate** | **Comparable behavior to 35-bit; selected for ASIC flow** |
+
+> **Note:** Final claims regarding silicon area savings, critical path timing improvements, and power reduction will be published strictly after completing the post-layout Synopsys RTL-to-GDSII sign-off.
+
 ---
-Verification Methodology
-Functional verification was performed using two complementary environments.
-MATLAB
-MATLAB was used as the algorithm-level reference environment for:
-LMS algorithm verification
-Input and desired signal generation
-Reference output generation
-Error analysis
-Datapath-width evaluation
-Generation of memory initialization files
-Xilinx Vivado
-Vivado was used for RTL-level functional verification through simulation.
-The Verilog implementation was tested using generated memory files and the corresponding testbench.
-The datapath widths were evaluated iteratively to determine whether reducing the datapath from 35 bits to 32 bits resulted in a significant change in functional behavior.
+
+## ✅ Verification Methodology
+
+### 1. MATLAB (Golden Reference Model)
+* Models the fixed-point LMS algorithm behavior.
+* Generates stimulus input vectors $x(n)$ and desired signals $d(n)$.
+* Computes golden reference outputs $y(n)$ and error convergence curves $e(n)$.
+* Exports stimulus vectors as `.mem` / `.txt` initialization files for RTL simulation.
+
+### 2. Xilinx Vivado (RTL Simulation)
+* Loads MATLAB-generated memory initialization files directly into the Verilog testbench (`$readmemb` / `$readmemh`).
+* Performs cycle-accurate functional simulation across all candidate bit-widths.
+* Validates that truncating the datapath from 35 bits to 32 bits introduces no overflow or functional divergence.
+
 ---
-Memory File Generation
-Input and reference data required for RTL simulation were generated using MATLAB and stored as memory initialization files.
-These files are subsequently loaded by the Verilog testbench to provide consistent test vectors during simulation.
-This establishes a common verification dataset between the algorithm-level MATLAB model and the RTL implementation.
----
-RTL Implementation
-The design is implemented using Verilog HDL.
-The RTL implementation includes the required datapath and control logic for the LMS adaptive filtering operation.
-The repository will contain separate implementations/configurations for:
-Conventional 35-bit datapath
-Optimized 32-bit datapath
-Verification testbench
-Simulation-related files
-Memory initialization files
-Supporting scripts and documentation
----
-Synopsys RTL-to-GDSII Flow
-The final stage of the project is the implementation of both the conventional and optimized architectures using Synopsys EDA tools.
-The intended implementation flow is:
+
+## 🏭 Synopsys RTL-to-GDSII Flow
+
+Both the 35-bit and 32-bit architectures are processed through a complete ASIC backend flow using Synopsys EDA tools:
+
 ```text
-RTL
- │
- ▼
-RTL Simulation
- │
- ▼
-Logic Synthesis
- │
- ▼
-Gate-Level Netlist
- │
- ▼
-Design Constraints
- │
- ▼
-Floorplanning
- │
- ▼
-Power Planning
- │
- ▼
-Placement
- │
- ▼
-Clock Tree Synthesis
- │
- ▼
-Routing
- │
- ▼
-Physical Verification
- │
- ▼
-GDSII
+          RTL (Verilog)
+                │
+                ▼
+         RTL Simulation
+                │
+                ▼
+         Logic Synthesis
+                │
+                ▼
+        Gate-Level Netlist
+                │
+                ▼
+     Design Constraints (SDC)
+                │
+                ▼
+          Floorplanning
+                │
+                ▼
+          Power Planning
+                │
+                ▼
+            Placement
+                │
+                ▼
+     Clock Tree Synthesis (CTS)
+                │
+                ▼
+             Routing
+                │
+                ▼
+      Physical Verification
+                │
+                ▼
+              GDSII
 ```
-The 35-bit and 32-bit implementations will be compared after synthesis and physical implementation.
-The comparison will focus on relevant implementation metrics such as:
-Area
-Timing / critical path
-Power
-Cell utilization
-Timing slack
-Physical design characteristics
-The final results will be documented after completion of the Synopsys flow.
+
+### Evaluation Metrics
+Post-layout comparisons between the 35-bit and 32-bit designs evaluate:
+* **Area:** Total cell area, core utilization, and gate count.
+* **Timing:** Critical path delay, setup/hold slack, and maximum operating frequency ($f_{\max}$).
+* **Power:** Dynamic (switching/internal) power and static leakage power.
+
 ---
-Project Status
-Stage	Status
-LMS algorithm development	Completed
-MATLAB verification	Completed
-Memory file generation	Completed
-35-bit RTL implementation	Completed
-34-bit evaluation	Completed
-33-bit evaluation	Completed
-32-bit evaluation	Completed
-Vivado functional verification	Completed
-35-bit Synopsys implementation	In Progress
-32-bit Synopsys implementation	In Progress
-PPA comparison	Pending
-RTL-to-GDSII implementation	Pending
-Final GDSII generation	Pending
----
-Tools and Technologies
-Verilog HDL
-MATLAB
-Xilinx Vivado
-Synopsys EDA Tools
-Linux
-RTL Simulation
-Logic Synthesis
-Physical Design
-GDSII Generation
----
-Repository Structure
+
+## 📁 Repository Structure
+
 ```text
 lms-adaptive-filter-rtl-to-gdsii/
-│
 ├── rtl/
-│   ├── conventional_35bit/
-│   └── optimized_32bit/
-│
-├── testbench/
-│
-├── matlab/
-│
-├── mem_files/
-│
-├── vivado/
-│
+│   ├── conventional_35bit/    # Baseline 35-bit Verilog RTL source files
+│   └── optimized_32bit/       # Optimized 32-bit Verilog RTL source files
+├── testbench/                 # Self-checking Verilog testbenches
+├── matlab/                    # Algorithm scripts, error analysis & vector generation
+├── mem_files/                 # Memory initialization files (.mem) for simulation
+├── vivado/                    # Xilinx Vivado simulation scripts and waveform configs
 ├── synopsys/
-│   ├── synthesis/
-│   ├── floorplan/
-│   ├── placement/
-│   ├── cts/
-│   ├── routing/
-│   └── reports/
-│
-├── results/
-│
-├── docs/
-│
+│   ├── synthesis/             # Logic synthesis scripts and constraints
+│   ├── floorplan/             # Floorplanning & power grid scripts
+│   ├── placement/             # Standard cell placement files
+│   ├── cts/                   # Clock Tree Synthesis scripts
+│   ├── routing/               # Detailed routing scripts
+│   └── reports/               # Timing, area, and power reports
+├── results/                   # Comparative PPA tables and post-layout plots
+├── docs/                      # Project reports, block diagrams, and documentation
 ├── .gitignore
 └── README.md
 ```
+
 ---
-Expected Outcome
-The project aims to demonstrate that an appropriately optimized 32-bit datapath can maintain comparable functional behavior to the conventional 35-bit implementation, while potentially reducing implementation cost.
-The Synopsys RTL-to-GDSII flow will be used to quantitatively evaluate whether the datapath reduction provides improvements in area, timing, power, or overall physical implementation efficiency.
-The final conclusion will be based on the measured implementation results rather than functional simulation alone.
+
+## 📊 Project Status
+
+| Stage | Task | Status |
+| :--- | :--- | :--- |
+| **Algorithm** | LMS algorithm development & MATLAB verification | ✅ Completed |
+| **Test Vectors** | Memory initialization file generation | ✅ Completed |
+| **RTL Design** | 35-bit, 34-bit, 33-bit & 32-bit RTL modeling | ✅ Completed |
+| **Verification** | Xilinx Vivado functional verification | ✅ Completed |
+| **Synthesis & P&R** | 35-bit Synopsys RTL-to-GDSII implementation | 🔄 In Progress |
+| **Synthesis & P&R** | 32-bit Synopsys RTL-to-GDSII implementation | 🔄 In Progress |
+| **Sign-Off** | PPA comparison & final GDSII generation | ⏳ Pending |
+
 ---
-Project Scope
-The scope of this project covers:
-Algorithm-level modeling
-RTL design
-Datapath optimization
-Functional verification
-Logic synthesis
-Physical design
-Timing analysis
-Power and area analysis
-RTL-to-GDSII implementation
-The project specifically investigates the relationship between datapath width, functional equivalence, and VLSI implementation characteristics.
+
+## 💻 Tools & Technologies
+
+* **HDL & Modeling:** Verilog HDL, MATLAB
+* **Simulation & Verification:** Xilinx Vivado
+* **ASIC Implementation:** Synopsys EDA Tools (Logic Synthesis, Physical Design, Static Timing Analysis, GDSII Generation)
+* **Environment:** Linux / Bash Scripting
+
 ---
-## Author
 
-**Penubothu Vishnusai**
+## 📌 Expected Outcome & Scope
 
-- Electronics and Communication Engineering
-- VLSI Design
-- Minor Project 2
+### Expected Outcome
+This project aims to demonstrate that reducing the LMS datapath from 35 bits to 32 bits preserves algorithmic convergence while yielding measurable hardware efficiency gains. All architectural conclusions will be grounded in post-layout physical implementation data rather than behavioral simulation alone.
 
-**Project Contributions:**
-- LMS Algorithm Development
-- Verilog RTL Design
-- Datapath Optimization (35-bit to 32-bit)
-- MATLAB and Vivado Functional Verification
-- Cadence Genus Synthesis
-- Cadence Innovus Physical Design
-- Timing, Area and Power Analysis
-- RTL-to-GDSII Implementation
+### Project Scope
+* Fixed-point algorithm modeling and quantization analysis
+* Modular Verilog RTL design and testbench development
+* Logic synthesis, timing closure, and physical layout (Floorplan to GDSII)
+* Comprehensive Power, Performance, and Area (PPA) benchmarking
 
-**Project Type:** Individual Academic Project
+---
+
+## 👤 Author
+
+**Penubothu Vishnusai**  
+*B.Tech — Electronics and Communication Engineering (VLSI Design)*  
+*Academic Term: Minor Project 2 (Individual Project)*
+
+**Key Contributions:**
+* LMS Algorithm Modeling & Quantization Analysis (MATLAB)
