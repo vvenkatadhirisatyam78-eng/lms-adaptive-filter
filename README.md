@@ -204,8 +204,8 @@ lms-adaptive-filter-rtl-to-gdsii/
 │   └── optimized_32bit/       # Optimized 32-bit Verilog RTL source files
 ├── testbench/                 # Self-checking Verilog testbenches
 ├── matlab/                    # Algorithm scripts, error analysis & vector generation
-├── mem_files/                 # Memory initialization files (.mem) for simulation
-├── vivado/                    # Xilinx Vivado simulation scripts and waveform configs
+├── mem/                 # Memory initialization files (.mem) for simulation
+├── xilinix2/                    # Xilinx Vivado simulation scripts and waveform configs
 ├── synopsys/
 │   ├── synthesis/             # Logic synthesis scripts and constraints
 │   ├── floorplan/             # Floorplanning & power grid scripts
